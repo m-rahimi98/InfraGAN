@@ -73,9 +73,10 @@ class ThermalDataset(BaseDataset):
         A_path = self.AB_paths[index]['A']
         B_path = self.AB_paths[index]['B']
         ann_path = self.AB_paths[index]['annotation_file']
-        A = Image.open(A_path).convert('RGB')
-        #A = A.resize((self.opt.loadSize, self.opt.loadSize), Image.BICUBIC)
-        A = transforms.ToTensor()(A.copy())
+        A = Image.open(A_path)                   # mode باید 'RGBA' یا 4-channel باشه
+        if A.mode != 'RGBA':
+            A = A.convert('RGBA')               # force 4 کانال
+        A = transforms.ToTensor()(A)  
         
         B = Image.open(B_path)
         B = ImageOps.grayscale(B)
@@ -94,7 +95,7 @@ class ThermalDataset(BaseDataset):
         B = B[:, h_offset:h_offset + self.opt.fineSize,
                w_offset:w_offset + self.opt.fineSize]
 
-        A = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))(A)
+        A = transforms.Normalize((0.5, 0.5, 0.5, 0.5), (0.5, 0.5, 0.5, 0.5))(A)
         B = transforms.Normalize([0.5], [0.5])(B)
 
         if self.opt.which_direction == 'BtoA':
