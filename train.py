@@ -15,6 +15,8 @@ dataset_size = len(data_loader)
 print('#training images = %d' % dataset_size)
 
 model = create_model(opt)
+if opt.continue_train:
+    model.load_networks(opt.which_epoch)
 visualizer = Visualizer(opt)
 total_steps = 0
 hist_error = model.get_errors()
