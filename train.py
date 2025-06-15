@@ -15,9 +15,6 @@ dataset_size = len(data_loader)
 print('#training images = %d' % dataset_size)
 
 model = create_model(opt)
-if opt.continue_train:
-    model.load_network(model.netG, 'G', opt.which_epoch)
-    model.load_network(model.netD, 'D', opt.which_epoch)
 visualizer = Visualizer(opt)
 total_steps = 0
 hist_error = model.get_errors()
@@ -27,7 +24,7 @@ visualizer.plot_data = {'train': OrderedDict((k, []) for k in hist_error.keys())
 eval = Evalulate(opt)
 if opt.continue_train:
     p = os.path.join(model.save_dir, "history.pth")
-    hist = torch.load(p, weights_only=False)
+    hist = torch.load(p)
     visualizer.plot_data = hist['plot_data']
     visualizer.metric_data = hist['metric']
 
